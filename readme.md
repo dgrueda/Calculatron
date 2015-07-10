@@ -1,3 +1,3 @@
 # Calculatron
 
-A different calculator app to learn Swfit development.
+Another calculator app to learn Swift development.
