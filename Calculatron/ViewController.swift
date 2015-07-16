@@ -17,22 +17,39 @@ class ViewController: UIViewController {
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         
-        if (displayIsClear) {
-            display.text = digit
+        if displayIsClear {
+            display.text = (digit == ".") ? "0." : digit
             displayIsClear = false
         }
         else {
-            display.text = display.text! + digit
+            if digit != "." || display.text!.rangeOfString(".") == nil {
+                display.text = display.text! + digit
+            }
+        }
+    }
+    
+    @IBAction func addConstant(sender: UIButton) {
+        let digit = sender.currentTitle!
+        var constant: Double;
+        
+        switch digit {
+            case "π": constant = M_PI
+        default: constant = 0.0
         }
         
+        if displayIsClear {
+            displayIsClear = false
+        }
+        
+        displayValue = constant
+        enter()
     }
-
+    
     var operandStack = [Double]()
     
     @IBAction func enter() {
         displayIsClear = true
         operandStack.append(displayValue)
-//        println(operandStack)
     }
     
     /// variable computed; cuando cambia de valor, ejecuta el set{}, cuando se lee, ejecuta el get{}
@@ -65,13 +82,17 @@ class ViewController: UIViewController {
                         return op1 * op2 }); -> Swift ya sabe el tipo de los parámetros
                     - performOperation({ (op1, op2) in op1 * op2 }); -> Swift ya sabe que se devuelve algo, y su tipo
                     - performOperation({ $0 * $1 }); -> accedes a los parámetros directamente a través del array de parámetros, sin necesidad de nombrarlos
+                    - performOperation { $0 * $1 }; -> Si la función es el último parámetro, puedes
+                        ponerla fuera de los paréntesis, e incluso eliminarlos si no hay más parámetros
             */
         case "+": performOperation { $0 + $1 }
         case "-": performOperation { $1 - $0 }
         case "×": performOperation { $0 * $1 }
         case "÷": performOperation { $1 / $0 }
-            /// Llama a la función sobrecargada
-        case "√": performOperation { sqrt($0) }
+            /// Llama a la función sobrecargada (con solo un parámetro)
+        case "sin": performOperation { sin($0) }
+        case "cos": performOperation { cos($0) }
+        case "√":   performOperation { sqrt($0) }
         default: break
         }
     }
